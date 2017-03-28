@@ -1,54 +1,146 @@
-## Project: Build a Traffic Sign Recognition Program
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+#Traffic Sign Recognition
 
-Overview
----
-In this project, you will use what you've learned about deep neural networks and convolutional neural networks to classify traffic signs. You will train and validate a model so it can classify traffic sign images using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset). After the model is trained, you will then try out your model on images of German traffic signs that you find on the web.
 
-We have included an Ipython notebook that contains further instructions 
-and starter code. Be sure to download the [Ipython notebook](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb). 
+Build a Traffic Sign Recognition Project
 
-We also want you to create a detailed writeup of the project. Check out the [writeup template](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup. The writeup can be either a markdown file or a pdf document.
-
-To meet specifications, the project will require submitting three files: 
-* the Ipython notebook with the code
-* the code exported as an html file
-* a writeup report either as a markdown or pdf file 
-
-Creating a Great Writeup
----
-A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/481/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
-
-The Project
----
 The goals / steps of this project are the following:
-* Load the data set
-* Explore, summarize and visualize the data set
-* Design, train and test a model architecture
-* Use the model to make predictions on new images
-* Analyze the softmax probabilities of the new images
-* Summarize the results with a written report
 
-### Dependencies
-This lab requires:
+1. Load the data set (see below for links to the project data set)
+2. Explore, summarize and visualize the data set
+3. Design, train and test a model architecture
+4. Use the model to make predictions on new images
+5. Analyze the softmax probabilities of the new images
+6. Summarize the results with a written report
+7. Rubric Points
 
-* [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
+####1. Provide a basic summary of the data set and identify where in your code the summary was done. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
 
-The lab enviroment can be created with CarND Term1 Starter Kit. Click [here](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) for the details.
+The code for this step is contained in the second code cell of the Jupyter notebook.
 
-### Dataset and Repository
+I used the numpy library to calculate summary statistics of the traffic signs data set:
 
-1. Download the data set. The classroom has a link to the data set in the "Project Instructions" content. This is a pickled dataset in which we've already resized the images to 32x32. It contains a training, validation and test set.
-2. Clone the project, which contains the Ipython notebook and the writeup template.
-```sh
-git clone https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project
-cd CarND-Traffic-Sign-Classifier-Project
-jupyter notebook Traffic_Sign_Classifier.ipynb
-```
+Number of training examples = 34799
+Number of testing examples = 12630
+Image data shape = (32, 32, 3)
+Number of classes = 43
+####2. Include an exploratory visualization of the dataset and identify where the code is in your code file.
 
-### Requirements for Submission
-Follow the instructions in the `Traffic_Sign_Classifier.ipynb` notebook and write the project report using the writeup template as a guide, `writeup_template.md`. Submit the project code and writeup document.
+The code for this step is contained in the third code cell of the IPython notebook.
+
+Here is an exploratory visualization of the data set. It is a print out of one of the elements in the training set prior to pre-processing.
+
+![](sample-img.png)
+
+###Design and Test a Model Architecture
+
+####1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc.
+
+I took the following steps for pre-processing:
+
+1. Using cv2, turn the image grayscale
+2. Normalize the grayscaled image by the operation `normalized_grey_img = grey_img / 255. - 0.5`
+3. Using `np.expand_dims()`, expand the the dimensions of the images to three dimensions.
+4. Shuffle the training set to avoid overfitting.
+
+####2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
+
+Each of the data sets were pulled from the provided pickled data using pickle. The training set contained 34799 example images to classify by the neural network. The set also included a set for validation to confirm the accuracy of the network.
+
+Finally, it also included a set of 12630 images to test the neural network against unfamiliar images.
+
+####3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+
+My final model consisted of the following layers. The network structure was introduced by the LeNet lab:
+
+1. 5x5 convolutional layer with an output depth of 6
+2. Relu
+3. Max pool with (1, 2, 2, 1)
+4. 5x5 convolutional layer with an output depth of 16
+5. Relu
+6. Max pool with (1, 2, 2, 1)
+7. Flatten data
+8. Fully connected layer 400 -> 120
+9. Fully connected layer 120 -> 84
+10. Fully connected layer 84 -> 43
+11. Softmax
+
+####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+
+The majority of hyper parameters can be found defined in the following set of constants:
+
+`
+# Constants
+EPOCHS = 75
+BATCH_SIZE = 128
+NORMALIZED_MEAN = 0
+NORMALIZED_ST_DEV = 0.1
+NUM_LABELS = 43
+NUM_FULLY_CONNECTED_NODES = 120
+NUM_FULLY_CONNECTED2_NODES = 84
+LEARNING_RATE = 0.006
+`
+
+This was to make it easier to tune the network during testing. The set of code of defining the way the network was tested can be found in the code snippit below. The suggestion was again taken from LeNet and used an Adam Optimizer.
+
+`
+# Calculate logits and setup optimizer
+logits = TrafficSignClassifier(x)
+cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=one_hot_y, logits=logits)
+loss_operation = tf.reduce_mean(cross_entropy)
+optimizer = tf.train.AdamOptimizer(learning_rate=LEARNING_RATE)
+training_operation = optimizer.minimize(loss_operation)
+`
+
+####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+
+The code for calculating the accuracy of the model is located in the ninth cell of the Ipython notebook.
+
+My final model results were:
+
+training set accuracy of ~ 92-94%
+validation set accuracy of ~ 92-94%
+test set accuracy of ~92-94%
+
+* I began with the LeNet architecture and decided to continue with it for the duration of the project. I was pretty confident in the performance of the architecture when the network was outputting results in the mid-high 80s prior to me adding any pre-processing logic to the architecture.
+* I ran into a bit of a struggle with getting the system to accept the single depth grayscale images during development. Eventually, with the help of forum moderators, I was able to complete training by using numpy's extend_dimension() method.
+* I tried adding layers to the network but any addition resulted in compilation errors or 
+* I played around with hyper parameters to see what parameters were making the largest difference on the eventual output. I noticed that increasing the learning rate hit a point of diminishing returns around .009. I also increased the epochs to decrease the amount of variance across training sessions. Finally, I also updated the code to change 
+* The key aspect I learned on this project was about how additional convolutional layers will pick up finer and finer details in the image compared to the previous layer. This became essential in distinguishing several similar looking signs.
+
+###Test a Model on New Images
+
+####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+
+Here are five German traffic signs that I found on the web:
+
+![](new-images.png)
+
+####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. Identify where in your code predictions were made. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+
+The code for making predictions on my final model is located in the tenth cell of the Ipython notebook.
+
+Here are the results of the prediction:
+
+Image	    Prediction
+60 km/h     60 km/h
+No Passing  No passing for vehicles over 3.5 metric tons
+Stop        Stop
+No Enter    No Enter
+Yield       Yield
+
+I've consistently have gotten 80% on these set of images.
+
+####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability.
+
+The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+
+All values in the softmax output is *very* confident about the system's prediction. This is interesting considering that one of the image (the No Passing image) has been consistently classified incorrectly. I'd like to think that this consistent error is due to how pixelized the image inside the sign is.
+
+Probability	Prediction
+1.0	    No Entry
+.999	No Passing
+.999	Yield
+1.0	    Speed limit 60km/h
+1.0  	Stop sign
+
+I also think that this high score on these images are due to the high number of epochs during training. In addition, these images have minimal amounts of space around the sign. In the future, I should try testing the system against images with large amounts of spacing.

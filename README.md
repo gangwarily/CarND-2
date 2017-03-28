@@ -128,7 +128,9 @@ Stop        Stop
 No Enter    No Enter
 Yield       Yield
 
-I've consistently have gotten 80% on these set of images.
+I've consistently have gotten 80% on these set of images. This is comparatively lower than the 92-94% range that I've gotten on the pickled dataset that I got as part of the assignment dataset. However, the fact that the "No Passing" image is failing consistently across test runs leads me to believe that it is either of the following:
+1. The image quality is becoming degraded to a point where the neural network cannot distinguish between "No Passing" and "No Passing for vehicles over 3.5 metric tons" very well.
+2. The convolutional components of the network is not being able to pick up finer details on the new image.
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability.
 
